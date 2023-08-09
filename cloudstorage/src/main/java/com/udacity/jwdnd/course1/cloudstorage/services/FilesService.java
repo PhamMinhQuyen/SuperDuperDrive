@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
@@ -24,22 +25,38 @@ import java.util.stream.Collectors;
     @Autowired
     private FilesMapper filesMapper;
     public void addFile(MultipartFile fileUpload, int userid) throws IOException {
-        Files file = new Files();
-        String originalFilename = fileUpload.getOriginalFilename();
-        List<Files> filesList = filesMapper.findByName(originalFilename + '%');
+//        Files file = new Files();
+//        String originalFilename = fileUpload.getOriginalFilename();
+//        List<Files> filesList = filesMapper.findByName(originalFilename + '%');
+//
+//        if(filesList.size() > 0){
+//            originalFilename = originalFilename.replace(originalFilename, originalFilename + "("+ filesList.size() +")");
+//        }
+//        try {
+//            file.setContentType(fileUpload.getContentType());
+//            file.setFileData(fileUpload.getBytes());
+//            file.setFileName(originalFilename);
+//            file.setFileSize(Long.toString(fileUpload.getSize()));
+//        } catch (IOException e) {
+//            throw e;
+//        }
+//        filesMapper.insertFile(file, userid);
 
-        if(filesList.size() > 0){
-            originalFilename = originalFilename.replace(originalFilename, originalFilename + "("+ filesList.size() +")");
-        }
+        Files file = new Files();
+
         try {
             file.setContentType(fileUpload.getContentType());
             file.setFileData(fileUpload.getBytes());
-            file.setFileName(originalFilename);
+            file.setFileName(fileUpload.getOriginalFilename());
             file.setFileSize(Long.toString(fileUpload.getSize()));
         } catch (IOException e) {
             throw e;
         }
         filesMapper.insertFile(file, userid);
+    }
+
+    public Files findByNameFileAndUserId (String nameFile, int userId) {
+        return filesMapper.findByNameAndUserId(nameFile, userId);
     }
 
     public ResponseFile getResponseFile(Files file) {
